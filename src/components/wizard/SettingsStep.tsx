@@ -25,23 +25,34 @@ export const SettingsStep = ({ data, updateData }: SettingsStepProps) => {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center space-x-2">
-        <Switch
-          id="login"
-          checked={data.settings.login}
-          onCheckedChange={(checked) => updateSettings({ login: checked })}
-        />
-        <Label htmlFor="login">Enable user login</Label>
-      </div>
-
       <div className="space-y-2">
-        <Label htmlFor="avatar">Avatar Name</Label>
-        <Input
-          id="avatar"
-          placeholder="e.g., mario"
+        <Label htmlFor="avatar">Select Avatar</Label>
+        <Select
           value={data.settings.avatar}
-          onChange={(e) => updateSettings({ avatar: e.target.value })}
-        />
+          onValueChange={(value) => updateSettings({ avatar: value })}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Select an avatar" />
+          </SelectTrigger>
+          <SelectContent>
+            {data.avatars.length === 0 ? (
+              <SelectItem value="" disabled>
+                No avatars configured
+              </SelectItem>
+            ) : (
+              data.avatars.map((avatar) => (
+                <SelectItem key={avatar.id} value={avatar.id}>
+                  {avatar.name} ({avatar.id})
+                </SelectItem>
+              ))
+            )}
+          </SelectContent>
+        </Select>
+        {data.avatars.length === 0 && (
+          <p className="text-sm text-muted-foreground">
+            Configure avatars in the Avatars step first
+          </p>
+        )}
       </div>
 
       <div className="space-y-2">

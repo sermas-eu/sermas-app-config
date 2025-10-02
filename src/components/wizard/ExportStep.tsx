@@ -14,23 +14,8 @@ interface ExportStepProps {
 }
 
 export const ExportStep = ({ data, updateData }: ExportStepProps) => {
-  const avatarInputRef = useRef<HTMLInputElement>(null);
   const backgroundInputRef = useRef<HTMLInputElement>(null);
   const ragInputRef = useRef<HTMLInputElement>(null);
-
-  const handleAvatarFile = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const validTypes = [".glb", ".fbx"];
-      const fileExt = "." + file.name.split(".").pop()?.toLowerCase();
-      if (validTypes.includes(fileExt)) {
-        updateData({ files: { ...data.files, avatarFile: file } });
-        toast.success(`Avatar file "${file.name}" added`);
-      } else {
-        toast.error("Please upload a .glb or .fbx file");
-      }
-    }
-  };
 
   const handleBackgroundFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -62,9 +47,17 @@ export const ExportStep = ({ data, updateData }: ExportStepProps) => {
 
   const generateYAML = () => {
     const config = {
-      appId: data.appId,
       name: data.name,
       public: data.public,
+      login: data.login,
+      avatars: data.avatars.map((a) => ({
+        id: a.id,
+        url: a.url,
+        gender: a.gender,
+        name: a.name,
+        prompt: a.prompt,
+        tts: a.tts,
+      })),
       modules: data.modules.map((m) => ({
         moduleId: m.moduleId,
         secret: m.secret,
@@ -73,7 +66,6 @@ export const ExportStep = ({ data, updateData }: ExportStepProps) => {
       })),
       description: data.description,
       settings: {
-        login: data.settings.login,
         avatar: data.settings.avatar,
         background: data.settings.background,
         language: data.settings.language,
@@ -94,7 +86,7 @@ export const ExportStep = ({ data, updateData }: ExportStepProps) => {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `${data.appId || "config"}.yaml`;
+    a.download = `${data.name.toLowerCase().replace(/\s+/g, "-") || "config"}.yaml`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -105,68 +97,45 @@ export const ExportStep = ({ data, updateData }: ExportStepProps) => {
   return (
     <div className="space-y-6">
       <Card className="p-6">
-        <h3 className="font-semibold mb-4">Avatar Model</h3>
+        <h3 className="font-semibold mb-4">Background Image</h3>
+        <p className="text-sm text-muted-foreground mb-4">
+          Minimum resolution: 1920x1080
+        </p>
         <div className="space-y-4">
           <div>
-            <Label htmlFor="avatarUrl">Avatar URL (optional)</Label>
+            <Label htmlFor="backgroundUrl">Background URL (optional)</Label>
             <Input
-              id="avatarUrl"
-              placeholder="https://example.com/avatar.glb"
-              value={data.files.avatarUrl}
+              id="backgroundUrl"
+              placeholder="https://example.com/background.jpg"
+              value={data.files.backgroundUrl}
               onChange={(e) =>
-                updateData({ files: { ...data.files, avatarUrl: e.target.value } })
+                updateData({ files: { ...data.files, backgroundUrl: e.target.value } })
               }
             />
           </div>
           <div className="text-center">
             <p className="text-sm text-muted-foreground mb-2">or upload a file</p>
             <input
-              ref={avatarInputRef}
+              ref={backgroundInputRef}
               type="file"
-              accept=".glb,.fbx"
-              onChange={handleAvatarFile}
+              accept="image/*"
+              onChange={handleBackgroundFile}
               className="hidden"
             />
             <Button
               variant="outline"
-              onClick={() => avatarInputRef.current?.click()}
+              onClick={() => backgroundInputRef.current?.click()}
             >
               <Upload className="w-4 h-4 mr-2" />
-              Upload GLB/FBX
+              Upload Background
             </Button>
-            {data.files.avatarFile && (
+            {data.files.backgroundFile && (
               <p className="text-sm text-muted-foreground mt-2">
-                Selected: {data.files.avatarFile.name}
+                Selected: {data.files.backgroundFile.name}
               </p>
             )}
           </div>
         </div>
-      </Card>
-
-      <Card className="p-6">
-        <h3 className="font-semibold mb-4">Background Image</h3>
-        <p className="text-sm text-muted-foreground mb-4">
-          Minimum resolution: 1920x1080
-        </p>
-        <input
-          ref={backgroundInputRef}
-          type="file"
-          accept="image/*"
-          onChange={handleBackgroundFile}
-          className="hidden"
-        />
-        <Button
-          variant="outline"
-          onClick={() => backgroundInputRef.current?.click()}
-        >
-          <Upload className="w-4 h-4 mr-2" />
-          Upload Background
-        </Button>
-        {data.files.backgroundFile && (
-          <p className="text-sm text-muted-foreground mt-2">
-            Selected: {data.files.backgroundFile.name}
-          </p>
-        )}
       </Card>
 
       <Card className="p-6">

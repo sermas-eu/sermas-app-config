@@ -5,6 +5,18 @@ export interface Module {
   config: Record<string, any>;
 }
 
+export interface Avatar {
+  id: string;
+  url: string;
+  gender: string;
+  name: string;
+  prompt: string;
+  tts: {
+    provider: string;
+    model: string;
+  };
+}
+
 export interface Theme {
   primaryBgColor: string;
   primaryTextColor: string;
@@ -22,7 +34,6 @@ export interface LLMConfig {
 }
 
 export interface Settings {
-  login: boolean;
   avatar: string;
   background: string;
   language: string;
@@ -34,16 +45,16 @@ export interface Settings {
 }
 
 export interface WizardData {
-  appId: string;
   name: string;
   description: string;
   public: boolean;
+  login: boolean;
+  avatars: Avatar[];
   modules: Module[];
   settings: Settings;
   files: {
-    avatarFile: File | null;
-    avatarUrl: string;
     backgroundFile: File | null;
+    backgroundUrl: string;
     ragFiles: File[];
   };
 }

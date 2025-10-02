@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Check, ChevronLeft, ChevronRight } from "lucide-react";
 import { BasicInfoStep } from "./wizard/BasicInfoStep";
+import { AvatarsStep } from "./wizard/AvatarsStep";
 import { ModulesStep } from "./wizard/ModulesStep";
 import { SettingsStep } from "./wizard/SettingsStep";
 import { ThemeStep } from "./wizard/ThemeStep";
@@ -12,23 +13,24 @@ import { WizardData } from "./wizard/types";
 
 const STEPS = [
   { id: 1, name: "Basic Info", component: BasicInfoStep },
-  { id: 2, name: "Modules", component: ModulesStep },
-  { id: 3, name: "Settings", component: SettingsStep },
-  { id: 4, name: "Theme", component: ThemeStep },
-  { id: 5, name: "LLM Config", component: LLMStep },
-  { id: 6, name: "Export", component: ExportStep },
+  { id: 2, name: "Avatars", component: AvatarsStep },
+  { id: 3, name: "Modules", component: ModulesStep },
+  { id: 4, name: "Settings", component: SettingsStep },
+  { id: 5, name: "Theme", component: ThemeStep },
+  { id: 6, name: "LLM Config", component: LLMStep },
+  { id: 7, name: "Export", component: ExportStep },
 ];
 
 export const ConfigWizard = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [data, setData] = useState<WizardData>({
-    appId: "",
     name: "",
     description: "",
     public: true,
+    login: false,
+    avatars: [],
     modules: [],
     settings: {
-      login: false,
       avatar: "",
       background: "",
       language: "en-US",
@@ -49,9 +51,8 @@ export const ConfigWizard = () => {
       },
     },
     files: {
-      avatarFile: null,
-      avatarUrl: "",
       backgroundFile: null,
+      backgroundUrl: "",
       ragFiles: [],
     },
   });
@@ -134,11 +135,12 @@ export const ConfigWizard = () => {
             <CardTitle>{STEPS[currentStep - 1].name}</CardTitle>
             <CardDescription>
               {currentStep === 1 && "Enter basic application information"}
-              {currentStep === 2 && "Configure application modules"}
-              {currentStep === 3 && "Configure application settings"}
-              {currentStep === 4 && "Customize the theme colors"}
-              {currentStep === 5 && "Select LLM models for different tasks"}
-              {currentStep === 6 && "Upload files and export configuration"}
+              {currentStep === 2 && "Configure avatars with their properties"}
+              {currentStep === 3 && "Configure application modules"}
+              {currentStep === 4 && "Configure application settings"}
+              {currentStep === 5 && "Customize the theme colors"}
+              {currentStep === 6 && "Select LLM models for different tasks"}
+              {currentStep === 7 && "Upload files and export configuration"}
             </CardDescription>
           </CardHeader>
           <CardContent>

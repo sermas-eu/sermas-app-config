@@ -13,19 +13,6 @@ export const BasicInfoStep = ({ data, updateData }: BasicInfoStepProps) => {
   return (
     <div className="space-y-6">
       <div className="space-y-2">
-        <Label htmlFor="appId">Application ID *</Label>
-        <Input
-          id="appId"
-          placeholder="e.g., my-app"
-          value={data.appId}
-          onChange={(e) => updateData({ appId: e.target.value })}
-        />
-        <p className="text-sm text-muted-foreground">
-          A unique identifier for your application
-        </p>
-      </div>
-
-      <div className="space-y-2">
         <Label htmlFor="name">Application Name *</Label>
         <Input
           id="name"
@@ -44,6 +31,15 @@ export const BasicInfoStep = ({ data, updateData }: BasicInfoStepProps) => {
           onChange={(e) => updateData({ description: e.target.value })}
           rows={4}
         />
+      </div>
+
+      <div className="flex items-center space-x-2">
+        <Switch
+          id="login"
+          checked={data.login}
+          onCheckedChange={(checked) => updateData({ login: checked })}
+        />
+        <Label htmlFor="login">Enable user login</Label>
       </div>
 
       <div className="flex items-center space-x-2">
