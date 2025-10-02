@@ -7,7 +7,6 @@ import { AvatarsStep } from "./wizard/AvatarsStep";
 import { ModulesStep } from "./wizard/ModulesStep";
 import { SettingsStep } from "./wizard/SettingsStep";
 import { ThemeStep } from "./wizard/ThemeStep";
-import { LLMStep } from "./wizard/LLMStep";
 import { ExportStep } from "./wizard/ExportStep";
 import { WizardData } from "./wizard/types";
 
@@ -17,8 +16,7 @@ const STEPS = [
   { id: 3, name: "Modules", component: ModulesStep },
   { id: 4, name: "Settings", component: SettingsStep },
   { id: 5, name: "Theme", component: ThemeStep },
-  { id: 6, name: "LLM Config", component: LLMStep },
-  { id: 7, name: "Export", component: ExportStep },
+  { id: 6, name: "Export", component: ExportStep },
 ];
 
 export const ConfigWizard = () => {
@@ -34,20 +32,13 @@ export const ConfigWizard = () => {
       avatar: "",
       background: "",
       language: "en-US",
+      chatModel: "groq/openai/gpt-oss-120b",
       prompt: { text: "" },
       theme: {
         primaryBgColor: "#3b82f6",
         primaryTextColor: "#ffffff",
         secondaryBgColor: "#e5e7eb",
         secondaryTextColor: "#555555",
-      },
-      llm: {
-        chat: "groq/openai/gpt-oss-120b",
-        tools: "groq/openai/gpt-oss-120b",
-        sentiment: "groq/openai/gpt-oss-120b",
-        tasks: "groq/openai/gpt-oss-120b",
-        intent: "groq/openai/gpt-oss-120b",
-        translation: "groq/openai/gpt-oss-120b",
       },
     },
     files: {
@@ -139,8 +130,7 @@ export const ConfigWizard = () => {
               {currentStep === 3 && "Configure application modules"}
               {currentStep === 4 && "Configure application settings"}
               {currentStep === 5 && "Customize the theme colors"}
-              {currentStep === 6 && "Select LLM models for different tasks"}
-              {currentStep === 7 && "Upload files and export configuration"}
+              {currentStep === 6 && "Upload files and export configuration"}
             </CardDescription>
           </CardHeader>
           <CardContent>

@@ -18,6 +18,12 @@ const LANGUAGES = [
   { value: "de-DE", label: "German" },
 ];
 
+const CHAT_MODELS = [
+  { value: "openai/gpt-4.1", label: "OpenAI ChatGPT 4.1" },
+  { value: "groq/openai/gpt-oss-120b", label: "Groq ChatGPT 120B" },
+  { value: "mistral/mistral-large-3.1", label: "Mistral 3.1" },
+];
+
 export const SettingsStep = ({ data, updateData }: SettingsStepProps) => {
   const updateSettings = (updates: Partial<typeof data.settings>) => {
     updateData({ settings: { ...data.settings, ...updates } });
@@ -26,31 +32,31 @@ export const SettingsStep = ({ data, updateData }: SettingsStepProps) => {
   return (
     <div className="space-y-6">
       <div className="space-y-2">
-        <Label htmlFor="avatar">Select Avatar</Label>
+        <Label htmlFor="avatar">Select Avatar (Optional)</Label>
         <Select
           value={data.settings.avatar}
           onValueChange={(value) => updateSettings({ avatar: value })}
         >
           <SelectTrigger>
-            <SelectValue placeholder="Select an avatar" />
+            <SelectValue placeholder="Default avatar will be used" />
           </SelectTrigger>
           <SelectContent>
-            {data.avatars.length === 0 ? (
-              <SelectItem value="" disabled>
-                No avatars configured
-              </SelectItem>
-            ) : (
+            {data.avatars.length > 0 ? (
               data.avatars.map((avatar) => (
                 <SelectItem key={avatar.id} value={avatar.id}>
                   {avatar.name} ({avatar.id})
                 </SelectItem>
               ))
+            ) : (
+              <SelectItem value="" disabled>
+                No custom avatars configured
+              </SelectItem>
             )}
           </SelectContent>
         </Select>
         {data.avatars.length === 0 && (
           <p className="text-sm text-muted-foreground">
-            Configure avatars in the Avatars step first
+            A default avatar will be used. Configure custom avatars in the Avatars step.
           </p>
         )}
       </div>
@@ -78,6 +84,25 @@ export const SettingsStep = ({ data, updateData }: SettingsStepProps) => {
             {LANGUAGES.map((lang) => (
               <SelectItem key={lang.value} value={lang.value}>
                 {lang.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="chatModel">Chat Model</Label>
+        <Select
+          value={data.settings.chatModel}
+          onValueChange={(value) => updateSettings({ chatModel: value })}
+        >
+          <SelectTrigger>
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {CHAT_MODELS.map((model) => (
+              <SelectItem key={model.value} value={model.value}>
+                {model.label}
               </SelectItem>
             ))}
           </SelectContent>

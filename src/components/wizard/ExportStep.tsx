@@ -69,11 +69,11 @@ export const ExportStep = ({ data, updateData }: ExportStepProps) => {
         avatar: data.settings.avatar,
         background: data.settings.background,
         language: data.settings.language,
+        chatModel: data.settings.chatModel,
         prompt: {
           text: data.settings.prompt.text,
         },
         theme: data.settings.theme,
-        llm: data.settings.llm,
       },
     };
 

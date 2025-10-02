@@ -24,24 +24,15 @@ export interface Theme {
   secondaryTextColor: string;
 }
 
-export interface LLMConfig {
-  chat: string;
-  tools: string;
-  sentiment: string;
-  tasks: string;
-  intent: string;
-  translation: string;
-}
-
 export interface Settings {
   avatar: string;
   background: string;
   language: string;
+  chatModel: string;
   prompt: {
     text: string;
   };
   theme: Theme;
-  llm: LLMConfig;
 }
 
 export interface WizardData {
