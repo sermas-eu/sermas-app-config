@@ -22,11 +22,17 @@ export interface Theme {
   primaryTextColor: string;
   secondaryBgColor: string;
   secondaryTextColor: string;
+  background: string;
+}
+
+export interface Document {
+  file: File | null;
+  url: string;
+  parser: "single-line" | "double-line";
 }
 
 export interface Settings {
   avatar: string;
-  background: string;
   language: string;
   chatModel: string;
   prompt: {
@@ -43,9 +49,7 @@ export interface WizardData {
   avatars: Avatar[];
   modules: Module[];
   settings: Settings;
-  files: {
-    backgroundFile: File | null;
-    backgroundUrl: string;
-    ragFiles: File[];
+  knowledge: {
+    documents: Document[];
   };
 }

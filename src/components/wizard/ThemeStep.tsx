@@ -1,7 +1,11 @@
+import { useRef } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Upload } from "lucide-react";
 import { WizardData } from "./types";
+import { toast } from "sonner";
 
 interface ThemeStepProps {
   data: WizardData;
@@ -9,6 +13,8 @@ interface ThemeStepProps {
 }
 
 export const ThemeStep = ({ data, updateData }: ThemeStepProps) => {
+  const backgroundInputRef = useRef<HTMLInputElement>(null);
+
   const updateTheme = (updates: Partial<typeof data.settings.theme>) => {
     updateData({
       settings: {
@@ -18,8 +24,60 @@ export const ThemeStep = ({ data, updateData }: ThemeStepProps) => {
     });
   };
 
+  const handleBackgroundUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.type.startsWith("image/")) {
+        // Store as data URL for preview
+        const reader = new FileReader();
+        reader.onload = () => {
+          updateTheme({ background: reader.result as string });
+        };
+        reader.readAsDataURL(file);
+        toast.success(`Background image "${file.name}" added`);
+      } else {
+        toast.error("Please upload an image file");
+      }
+    }
+  };
+
   return (
     <div className="space-y-6">
+      <Card className="p-6">
+        <h3 className="font-semibold mb-4">Background Image</h3>
+        <p className="text-sm text-muted-foreground mb-4">
+          Minimum resolution: 1920x1080
+        </p>
+        <div className="space-y-4">
+          <div>
+            <Label htmlFor="backgroundUrl">Background URL</Label>
+            <Input
+              id="backgroundUrl"
+              placeholder="https://example.com/background.jpg"
+              value={data.settings.theme.background}
+              onChange={(e) => updateTheme({ background: e.target.value })}
+            />
+          </div>
+          <div className="text-center">
+            <p className="text-sm text-muted-foreground mb-2">or upload a file</p>
+            <input
+              ref={backgroundInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleBackgroundUpload}
+              className="hidden"
+            />
+            <Button
+              variant="outline"
+              onClick={() => backgroundInputRef.current?.click()}
+            >
+              <Upload className="w-4 h-4 mr-2" />
+              Upload Background
+            </Button>
+          </div>
+        </div>
+      </Card>
+
       <Card className="p-6">
         <h3 className="font-semibold mb-4">Primary Colors</h3>
         <div className="grid grid-cols-2 gap-4">

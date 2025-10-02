@@ -62,16 +62,6 @@ export const SettingsStep = ({ data, updateData }: SettingsStepProps) => {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="background">Background Name</Label>
-        <Input
-          id="background"
-          placeholder="e.g., office, lab"
-          value={data.settings.background}
-          onChange={(e) => updateSettings({ background: e.target.value })}
-        />
-      </div>
-
-      <div className="space-y-2">
         <Label htmlFor="language">Language</Label>
         <Select
           value={data.settings.language}

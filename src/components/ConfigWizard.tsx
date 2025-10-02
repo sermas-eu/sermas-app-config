@@ -7,6 +7,7 @@ import { AvatarsStep } from "./wizard/AvatarsStep";
 import { ModulesStep } from "./wizard/ModulesStep";
 import { SettingsStep } from "./wizard/SettingsStep";
 import { ThemeStep } from "./wizard/ThemeStep";
+import { KnowledgeStep } from "./wizard/KnowledgeStep";
 import { ExportStep } from "./wizard/ExportStep";
 import { WizardData } from "./wizard/types";
 
@@ -16,7 +17,8 @@ const STEPS = [
   { id: 3, name: "Modules", component: ModulesStep },
   { id: 4, name: "Settings", component: SettingsStep },
   { id: 5, name: "Theme", component: ThemeStep },
-  { id: 6, name: "Export", component: ExportStep },
+  { id: 6, name: "Knowledge", component: KnowledgeStep },
+  { id: 7, name: "Export", component: ExportStep },
 ];
 
 export const ConfigWizard = () => {
@@ -30,7 +32,6 @@ export const ConfigWizard = () => {
     modules: [],
     settings: {
       avatar: "",
-      background: "",
       language: "en-US",
       chatModel: "groq/openai/gpt-oss-120b",
       prompt: { text: "" },
@@ -39,12 +40,11 @@ export const ConfigWizard = () => {
         primaryTextColor: "#ffffff",
         secondaryBgColor: "#e5e7eb",
         secondaryTextColor: "#555555",
+        background: "",
       },
     },
-    files: {
-      backgroundFile: null,
-      backgroundUrl: "",
-      ragFiles: [],
+    knowledge: {
+      documents: [],
     },
   });
 
@@ -129,8 +129,9 @@ export const ConfigWizard = () => {
               {currentStep === 2 && "Configure avatars with their properties"}
               {currentStep === 3 && "Configure application modules"}
               {currentStep === 4 && "Configure application settings"}
-              {currentStep === 5 && "Customize the theme colors"}
-              {currentStep === 6 && "Upload files and export configuration"}
+              {currentStep === 5 && "Customize theme colors and background"}
+              {currentStep === 6 && "Add knowledge base documents for RAG"}
+              {currentStep === 7 && "Create application or export configuration"}
             </CardDescription>
           </CardHeader>
           <CardContent>
