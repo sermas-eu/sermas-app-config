@@ -34,20 +34,33 @@ export const AvatarsStep = ({ data, updateData }: AvatarsStepProps) => {
     },
   });
 
+  const generateId = (name: string): string => {
+    return name
+      .toLowerCase()
+      .replace(/[^a-z0-9-]/g, '-')
+      .replace(/-+/g, '-')
+      .replace(/^-|-$/g, '');
+  };
+
   const addAvatar = () => {
-    if (!currentAvatar.id || !currentAvatar.name) {
-      toast.error("Avatar ID and Name are required");
+    if (!currentAvatar.name) {
+      toast.error("Avatar Name is required");
       return;
     }
     
+    const avatarToSave = {
+      ...currentAvatar,
+      id: generateId(currentAvatar.name)
+    };
+    
     if (editingIndex !== null) {
       const newAvatars = [...data.avatars];
-      newAvatars[editingIndex] = currentAvatar;
+      newAvatars[editingIndex] = avatarToSave;
       updateData({ avatars: newAvatars });
       toast.success("Avatar updated");
       setEditingIndex(null);
     } else {
-      updateData({ avatars: [...data.avatars, currentAvatar] });
+      updateData({ avatars: [...data.avatars, avatarToSave] });
       toast.success("Avatar added");
     }
     
@@ -91,29 +104,19 @@ export const AvatarsStep = ({ data, updateData }: AvatarsStepProps) => {
           {editingIndex !== null ? "Edit Avatar" : "Add Avatar"}
         </h3>
         <div className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="avatarId">Avatar ID *</Label>
-              <Input
-                id="avatarId"
-                placeholder="e.g., emma"
-                value={currentAvatar.id}
-                onChange={(e) =>
-                  setCurrentAvatar({ ...currentAvatar, id: e.target.value })
-                }
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="avatarName">Name *</Label>
-              <Input
-                id="avatarName"
-                placeholder="e.g., Emma"
-                value={currentAvatar.name}
-                onChange={(e) =>
-                  setCurrentAvatar({ ...currentAvatar, name: e.target.value })
-                }
-              />
-            </div>
+          <div className="space-y-2">
+            <Label htmlFor="avatarName">Name *</Label>
+            <Input
+              id="avatarName"
+              placeholder="e.g., Emma"
+              value={currentAvatar.name}
+              onChange={(e) =>
+                setCurrentAvatar({ ...currentAvatar, name: e.target.value })
+              }
+            />
+            <p className="text-sm text-muted-foreground">
+              ID will be auto-generated: {currentAvatar.name ? generateId(currentAvatar.name) : '(enter name)'}
+            </p>
           </div>
 
           <div className="space-y-2">

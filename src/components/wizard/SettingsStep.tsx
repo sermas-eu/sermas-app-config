@@ -34,7 +34,7 @@ export const SettingsStep = ({ data, updateData }: SettingsStepProps) => {
       <div className="space-y-2">
         <Label htmlFor="avatar">Select Avatar (Optional)</Label>
         <Select
-          value={data.settings.avatar}
+          value={data.settings.avatar || ""}
           onValueChange={(value) => updateSettings({ avatar: value })}
         >
           <SelectTrigger>
@@ -48,7 +48,7 @@ export const SettingsStep = ({ data, updateData }: SettingsStepProps) => {
                 </SelectItem>
               ))
             ) : (
-              <SelectItem value="" disabled>
+              <SelectItem value="default" disabled>
                 No custom avatars configured
               </SelectItem>
             )}
