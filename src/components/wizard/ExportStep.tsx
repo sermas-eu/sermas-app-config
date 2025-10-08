@@ -22,7 +22,7 @@ export const ExportStep = ({ data }: ExportStepProps) => {
     };
 
     if (data.avatars.length > 0) {
-      config.avatars = data.avatars.map(avatar => ({
+      config.avatars = data.avatars.map((avatar) => ({
         id: avatar.id,
         url: avatar.url,
         gender: avatar.gender,
@@ -57,12 +57,14 @@ export const ExportStep = ({ data }: ExportStepProps) => {
 
     if (data.knowledge.documents.length > 0) {
       config.knowledge = {
-        documents: data.knowledge.documents.map(doc => ({
-          url: doc.url || undefined,
-          options: {
-            parser: doc.parser,
-          },
-        })).filter(doc => doc.url),
+        documents: data.knowledge.documents
+          .map((doc) => ({
+            url: doc.url || undefined,
+            options: {
+              parser: doc.parser,
+            },
+          }))
+          .filter((doc) => doc.url),
       };
     }
 
@@ -75,7 +77,9 @@ export const ExportStep = ({ data }: ExportStepProps) => {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `${data.name.toLowerCase().replace(/\s+/g, "-") || "config"}.yaml`;
+    a.download = `${
+      data.name.toLowerCase().replace(/\s+/g, "-") || "config"
+    }.yaml`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -87,13 +91,20 @@ export const ExportStep = ({ data }: ExportStepProps) => {
     setIsCreating(true);
     try {
       const formData = new FormData();
-      
+
       // Add YAML config
       const yamlContent = generateYAML();
-      formData.append("config", new Blob([yamlContent], { type: "text/yaml" }), "config.yaml");
+      formData.append(
+        "config",
+        new Blob([yamlContent], { type: "text/yaml" }),
+        "config.yaml"
+      );
 
       // Add background file if uploaded
-      if (data.settings.theme.background && data.settings.theme.background.startsWith("data:")) {
+      if (
+        data.settings.theme.background &&
+        data.settings.theme.background.startsWith("data:")
+      ) {
         const response = await fetch(data.settings.theme.background);
         const blob = await response.blob();
         formData.append("background", blob, "background.jpg");
@@ -106,7 +117,9 @@ export const ExportStep = ({ data }: ExportStepProps) => {
         }
       });
 
-      const response = await fetch("http://sermas.local/api/app/import", {
+      console.warn("formdata", formData);
+
+      const response = await fetch("http://localhost:3000/import-app", {
         method: "POST",
         body: formData,
       });
@@ -120,7 +133,9 @@ export const ExportStep = ({ data }: ExportStepProps) => {
       console.log("Creation result:", result);
     } catch (error) {
       console.error("Creation error:", error);
-      toast.error(error instanceof Error ? error.message : "Failed to create application");
+      toast.error(
+        error instanceof Error ? error.message : "Failed to create application"
+      );
     } finally {
       setIsCreating(false);
     }
@@ -133,7 +148,12 @@ export const ExportStep = ({ data }: ExportStepProps) => {
         <p className="text-sm text-muted-foreground mb-4">
           Submit your configuration to create the SERMAS application
         </p>
-        <Button onClick={createApp} disabled={isCreating} className="w-full" size="lg">
+        <Button
+          onClick={createApp}
+          disabled={isCreating}
+          className="w-full"
+          size="lg"
+        >
           <Send className="w-4 h-4 mr-2" />
           {isCreating ? "Creating..." : "Create Application"}
         </Button>

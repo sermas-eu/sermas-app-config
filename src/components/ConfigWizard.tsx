@@ -1,5 +1,11 @@
 import { useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Check, ChevronLeft, ChevronRight } from "lucide-react";
 import { BasicInfoStep } from "./wizard/BasicInfoStep";
@@ -47,6 +53,7 @@ export const ConfigWizard = () => {
       documents: [],
     },
   });
+  const [enabled, setEnabled] = useState(false);
 
   const CurrentStepComponent = STEPS[currentStep - 1].component;
 
@@ -64,6 +71,8 @@ export const ConfigWizard = () => {
 
   const updateData = (newData: Partial<WizardData>) => {
     setData({ ...data, ...newData });
+    if (currentStep == 1) setEnabled(!!newData.name);
+    if (currentStep == 2) setEnabled(newData.avatars.length != 0);
   };
 
   return (
@@ -102,7 +111,9 @@ export const ConfigWizard = () => {
                   </div>
                   <span
                     className={`text-xs mt-2 text-center ${
-                      currentStep >= step.id ? "text-foreground" : "text-muted-foreground"
+                      currentStep >= step.id
+                        ? "text-foreground"
+                        : "text-muted-foreground"
                     }`}
                   >
                     {step.name}
@@ -131,7 +142,8 @@ export const ConfigWizard = () => {
               {currentStep === 4 && "Configure application settings"}
               {currentStep === 5 && "Customize theme colors and background"}
               {currentStep === 6 && "Add knowledge base documents for RAG"}
-              {currentStep === 7 && "Create application or export configuration"}
+              {currentStep === 7 &&
+                "Create application or export configuration"}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -148,7 +160,7 @@ export const ConfigWizard = () => {
                 Previous
               </Button>
               {currentStep < STEPS.length ? (
-                <Button onClick={handleNext}>
+                <Button onClick={handleNext} disabled={!enabled}>
                   Next
                   <ChevronRight className="w-4 h-4 ml-2" />
                 </Button>

@@ -7,7 +7,7 @@ import { Card } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus, Trash2 } from "lucide-react";
 import { WizardData, Avatar } from "./types";
-import { toast } from "sonner";
+import { toast, Toaster } from "sonner";
 
 interface AvatarsStepProps {
   data: WizardData;
@@ -99,6 +99,7 @@ export const AvatarsStep = ({ data, updateData }: AvatarsStepProps) => {
 
   return (
     <div className="space-y-6">
+      <Toaster richColors />
       <Card className="p-6">
         <h3 className="font-semibold mb-4">
           {editingIndex !== null ? "Edit Avatar" : "Add Avatar"}
@@ -115,7 +116,10 @@ export const AvatarsStep = ({ data, updateData }: AvatarsStepProps) => {
               }
             />
             <p className="text-sm text-muted-foreground">
-              ID will be auto-generated: {currentAvatar.name ? generateId(currentAvatar.name) : '(enter name)'}
+              ID will be auto-generated:{" "}
+              {currentAvatar.name
+                ? generateId(currentAvatar.name)
+                : "(enter name)"}
             </p>
           </div>
 
@@ -229,7 +233,8 @@ export const AvatarsStep = ({ data, updateData }: AvatarsStepProps) => {
                 <div>
                   <p className="font-medium">{avatar.name}</p>
                   <p className="text-sm text-muted-foreground">
-                    ID: {avatar.id} | Gender: {avatar.gender} | TTS: {avatar.tts.provider}
+                    ID: {avatar.id} | Gender: {avatar.gender} | TTS:{" "}
+                    {avatar.tts.provider}
                   </p>
                 </div>
                 <div className="flex gap-2">
