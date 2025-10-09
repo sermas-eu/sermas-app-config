@@ -5,7 +5,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, Trash2 } from "lucide-react";
+import { Plus, Trash2, ExternalLink } from "lucide-react";
 import { WizardData, Avatar } from "./types";
 import { toast } from "sonner";
 
@@ -14,11 +14,6 @@ interface AvatarsStepProps {
   updateData: (data: Partial<WizardData>) => void;
 }
 
-const TTS_PROVIDERS = [
-  { value: "google", label: "Google" },
-  { value: "elevenlabs", label: "ElevenLabs" },
-  { value: "azure", label: "Azure" },
-];
 
 export const AvatarsStep = ({ data, updateData }: AvatarsStepProps) => {
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
@@ -129,6 +124,21 @@ export const AvatarsStep = ({ data, updateData }: AvatarsStepProps) => {
                 setCurrentAvatar({ ...currentAvatar, url: e.target.value })
               }
             />
+            <div className="flex items-start gap-2 p-3 bg-muted rounded-md">
+              <div className="flex-1">
+                <p className="text-sm text-muted-foreground">
+                  Use readyplayer.me to create your avatar, then copy the model URL here
+                </p>
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => window.open("https://demo.readyplayer.me/", "_blank")}
+              >
+                <ExternalLink className="w-4 h-4 mr-2" />
+                Create your avatar
+              </Button>
+            </div>
           </div>
 
           <div className="space-y-2">
@@ -163,45 +173,6 @@ export const AvatarsStep = ({ data, updateData }: AvatarsStepProps) => {
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="ttsProvider">TTS Provider</Label>
-              <Select
-                value={currentAvatar.tts.provider}
-                onValueChange={(value) =>
-                  setCurrentAvatar({
-                    ...currentAvatar,
-                    tts: { ...currentAvatar.tts, provider: value },
-                  })
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {TTS_PROVIDERS.map((provider) => (
-                    <SelectItem key={provider.value} value={provider.value}>
-                      {provider.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="ttsModel">TTS Model</Label>
-              <Input
-                id="ttsModel"
-                placeholder="e.g., it-IT-Chirp3-HD-Aoede"
-                value={currentAvatar.tts.model}
-                onChange={(e) =>
-                  setCurrentAvatar({
-                    ...currentAvatar,
-                    tts: { ...currentAvatar.tts, model: e.target.value },
-                  })
-                }
-              />
-            </div>
-          </div>
 
           <div className="flex gap-2">
             <Button onClick={addAvatar} className="flex-1">
@@ -229,7 +200,7 @@ export const AvatarsStep = ({ data, updateData }: AvatarsStepProps) => {
                 <div>
                   <p className="font-medium">{avatar.name}</p>
                   <p className="text-sm text-muted-foreground">
-                    ID: {avatar.id} | Gender: {avatar.gender} | TTS: {avatar.tts.provider}
+                    ID: {avatar.id} | Gender: {avatar.gender}
                   </p>
                 </div>
                 <div className="flex gap-2">
