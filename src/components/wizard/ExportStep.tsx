@@ -58,11 +58,10 @@ export const ExportStep = ({ data }: ExportStepProps) => {
     if (data.knowledge.documents.length > 0) {
       config.knowledge = {
         documents: data.knowledge.documents.map(doc => ({
+          name: doc.name,
           url: doc.url || undefined,
-          options: {
-            parser: doc.parser,
-          },
-        })).filter(doc => doc.url),
+          text: doc.text || undefined,
+        })).filter(doc => doc.name && (doc.url || doc.text)),
       };
     }
 
@@ -99,10 +98,11 @@ export const ExportStep = ({ data }: ExportStepProps) => {
         formData.append("background", blob, "background.jpg");
       }
 
-      // Add knowledge documents
+      // Add knowledge documents as text files
       data.knowledge.documents.forEach((doc, index) => {
-        if (doc.file) {
-          formData.append(`document_${index}`, doc.file);
+        if (doc.text) {
+          const blob = new Blob([doc.text], { type: "text/plain" });
+          formData.append(`document_${index}`, blob, `${doc.name}.txt`);
         }
       });
 

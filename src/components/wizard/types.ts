@@ -26,9 +26,9 @@ export interface Theme {
 }
 
 export interface Document {
-  file: File | null;
+  name: string;
   url: string;
-  parser: "single-line" | "double-line";
+  text: string;
 }
 
 export interface Settings {

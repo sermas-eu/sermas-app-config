@@ -18,9 +18,9 @@ export const KnowledgeStep = ({ data, updateData }: KnowledgeStepProps) => {
 
   const addDocument = () => {
     const newDoc: Document = {
-      file: null,
+      name: "",
       url: "",
-      parser: "single-line",
+      text: "",
     };
     updateData({
       knowledge: {
@@ -48,11 +48,13 @@ export const KnowledgeStep = ({ data, updateData }: KnowledgeStepProps) => {
     });
   };
 
-  const handleFileUpload = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       if (file.name.endsWith(".txt")) {
-        updateDocument(index, { file });
+        const text = await file.text();
+        const name = file.name.replace(/\.txt$/, "").replace(/[^a-zA-Z0-9-]/g, "-");
+        updateDocument(index, { name, text });
         toast.success(`Document "${file.name}" added`);
       } else {
         toast.error("Please upload a .txt file");
@@ -96,6 +98,18 @@ export const KnowledgeStep = ({ data, updateData }: KnowledgeStepProps) => {
                 </div>
 
                 <div className="space-y-2">
+                  <Label>Document Name</Label>
+                  <Input
+                    placeholder="document-name"
+                    value={doc.name}
+                    onChange={(e) => {
+                      const sanitized = e.target.value.replace(/[^a-zA-Z0-9-]/g, "-");
+                      updateDocument(index, { name: sanitized });
+                    }}
+                  />
+                </div>
+
+                <div className="space-y-2">
                   <Label>Document URL</Label>
                   <Input
                     placeholder="https://example.com/document.txt"
@@ -121,32 +135,11 @@ export const KnowledgeStep = ({ data, updateData }: KnowledgeStepProps) => {
                     <Upload className="w-4 h-4 mr-2" />
                     Upload TXT File
                   </Button>
-                  {doc.file && (
+                  {doc.text && (
                     <p className="text-sm text-muted-foreground mt-2">
-                      Selected: {doc.file.name}
+                      Content loaded ({doc.text.length} characters)
                     </p>
                   )}
-                </div>
-
-                <div className="space-y-2">
-                  <Label>Parser Type</Label>
-                  <Select
-                    value={doc.parser}
-                    onValueChange={(value: "single-line" | "double-line") =>
-                      updateDocument(index, { parser: value })
-                    }
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="single-line">Single Line</SelectItem>
-                      <SelectItem value="double-line">Double Line</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <p className="text-xs text-muted-foreground">
-                    Defines how to split the text file into documents
-                  </p>
                 </div>
               </div>
             </Card>
