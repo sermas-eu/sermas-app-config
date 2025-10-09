@@ -1,8 +1,6 @@
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { WizardData } from "./types";
 
 interface SettingsStepProps {
@@ -21,7 +19,6 @@ const LANGUAGES = [
 const CHAT_MODELS = [
   { value: "openai/gpt-4.1", label: "OpenAI ChatGPT 4.1" },
   { value: "groq/openai/gpt-oss-120b", label: "Groq ChatGPT 120B" },
-  { value: "mistral/mistral-large-3.1", label: "Mistral 3.1" },
 ];
 
 export const SettingsStep = ({ data, updateData }: SettingsStepProps) => {

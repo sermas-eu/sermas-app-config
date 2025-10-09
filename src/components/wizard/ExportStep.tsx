@@ -1,10 +1,12 @@
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Download, Send } from "lucide-react";
-import { WizardData } from "./types";
-import { toast } from "sonner";
 import yaml from "js-yaml";
+import { Download, Send } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
+import { WizardData } from "./types";
+
+const API_URL = "/api/wizard"
 
 interface ExportStepProps {
   data: WizardData;
@@ -14,7 +16,7 @@ interface ExportStepProps {
 export const ExportStep = ({ data }: ExportStepProps) => {
   const [isCreating, setIsCreating] = useState(false);
 
-  const generateYAML = () => {
+  const createConfig = () => {
     const config: any = {
       name: data.name,
       public: data.public,
@@ -65,11 +67,17 @@ export const ExportStep = ({ data }: ExportStepProps) => {
       };
     }
 
+    return config
+  };
+
+  const generateYAML = (config: any) => {
     return yaml.dump(config, { indent: 2, lineWidth: -1 });
   };
 
   const downloadYAML = () => {
-    const yamlContent = generateYAML();
+    const payload = createConfig();
+    const yamlContent = generateYAML(payload);
+
     const blob = new Blob([yamlContent], { type: "text/yaml" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -86,16 +94,20 @@ export const ExportStep = ({ data }: ExportStepProps) => {
     setIsCreating(true);
     try {
       const formData = new FormData();
-      
-      // Add YAML config
-      const yamlContent = generateYAML();
-      formData.append("config", new Blob([yamlContent], { type: "text/yaml" }), "config.yaml");
+
+      // Add config
+      const config = createConfig();
+      formData.append("config", new Blob([JSON.stringify(config)], { type: "text/json" }), "config.json");
 
       // Add background file if uploaded
       if (data.settings.theme.background && data.settings.theme.background.startsWith("data:")) {
-        const response = await fetch(data.settings.theme.background);
-        const blob = await response.blob();
-        formData.append("background", blob, "background.jpg");
+        try {
+          const response = await fetch(data.settings.theme.background);
+          const blob = await response.blob();
+          formData.append("background", blob, "background.jpg");
+        } catch (error) {
+          toast.error("Failed to download background image " + (error instanceof Error ? ":" + error.message : ""));
+        }
       }
 
       // Add knowledge documents as text files
@@ -106,7 +118,7 @@ export const ExportStep = ({ data }: ExportStepProps) => {
         }
       });
 
-      const response = await fetch("http://sermas.local/api/app/import", {
+      const response = await fetch(API_URL, {
         method: "POST",
         body: formData,
       });
@@ -117,7 +129,15 @@ export const ExportStep = ({ data }: ExportStepProps) => {
 
       const result = await response.json();
       toast.success("Application created successfully!");
+
       console.log("Creation result:", result);
+
+      if (result.responseObject?.redirect) {
+        toast.info("Moving to the new application in a moment");
+        console.log(result.responseObject?.redirect)
+        // document.location = result.responseObject?.redirect
+      }
+
     } catch (error) {
       console.error("Creation error:", error);
       toast.error(error instanceof Error ? error.message : "Failed to create application");
@@ -153,7 +173,7 @@ export const ExportStep = ({ data }: ExportStepProps) => {
       <Card className="p-4 bg-muted">
         <h4 className="text-sm font-semibold mb-2">Preview</h4>
         <pre className="text-xs overflow-auto max-h-96 p-4 bg-background rounded">
-          {generateYAML()}
+          {generateYAML(createConfig())}
         </pre>
       </Card>
     </div>
