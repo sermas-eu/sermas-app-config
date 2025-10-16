@@ -31,9 +31,9 @@ export class AppService {
   constructor() {
     this.sermas = new SermasApiClient({
       baseURL: env.SERMAS_URL,
-      clientId: env.SERMAS_CLIENT_ID,
-      clientSecret: env.SERMAS_CLIENT_SECRET,
-      appId: env.SERMAS_APPID,
+      // clientId: env.SERMAS_CLIENT_ID,
+      // clientSecret: env.SERMAS_CLIENT_SECRET,
+      // appId: env.SERMAS_APPID,
     });
   }
 
@@ -74,7 +74,7 @@ export class AppService {
     this.logger.debug(`Received ${JSON.stringify(data, null, 2)}`);
     const assistant = SermasAppSchema.parse(data);
 
-    await this.sermas.loadToken(env.SERMAS_CLIENT_ID, env.SERMAS_CLIENT_SECRET);
+    // await this.sermas.loadToken(env.SERMAS_CLIENT_ID, env.SERMAS_CLIENT_SECRET);
     const res = await this.sermas.login(env.SERMAS_USER, env.SERMAS_PASSWORD);
 
     const client = new SermasApiClient({
