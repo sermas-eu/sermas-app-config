@@ -135,7 +135,7 @@ export const ExportStep = ({ data }: ExportStepProps) => {
       if (result.responseObject?.redirect) {
         toast.info("Moving to the new application in a moment");
         console.log(result.responseObject?.redirect)
-        // document.location = result.responseObject?.redirect
+        document.location = result.responseObject?.redirect
       }
 
     } catch (error) {
