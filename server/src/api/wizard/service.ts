@@ -85,7 +85,8 @@ export class AppService {
     const user = await client.api.authentication.whoami();
 
     const chatModel = assistant.settings?.chatModel || 'groq';
-    const selectedModel = chatModel.indexOf('groq')
+    // `indexOf` was 0 (falsy) for "groq…", so groq picked gpt-4.1
+    const selectedModel = chatModel.startsWith('groq')
       ? 'groq/openai/gpt-oss-120b'
       : 'openai/gpt-4.1';
 
