@@ -1,6 +1,35 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* The theme reads the HSL triplets below; the colours, radii and names are the ones
+   the Tailwind 3 config defined. */
+@theme inline {
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+}
 
 /* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
 All colors MUST be HSL.
@@ -42,22 +71,6 @@ All colors MUST be HSL.
     --gradient-hero: linear-gradient(to bottom right, hsl(217 91% 60% / 0.1), hsl(262 83% 58% / 0.1));
     --shadow-card: 0 4px 6px -1px hsl(220 40% 10% / 0.1), 0 2px 4px -2px hsl(220 40% 10% / 0.1);
     --shadow-hover: 0 10px 15px -3px hsl(217 91% 60% / 0.2), 0 4px 6px -4px hsl(217 91% 60% / 0.1);
-
-    --sidebar-background: 0 0% 98%;
-
-    --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
   .dark {
@@ -93,14 +106,6 @@ All colors MUST be HSL.
     --gradient-hero: linear-gradient(to bottom right, hsl(217 91% 60% / 0.15), hsl(262 83% 58% / 0.15));
     --shadow-card: 0 4px 6px -1px hsl(0 0% 0% / 0.4), 0 2px 4px -2px hsl(0 0% 0% / 0.3);
     --shadow-hover: 0 10px 15px -3px hsl(217 91% 60% / 0.3), 0 4px 6px -4px hsl(217 91% 60% / 0.2);
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
   }
 }
 
@@ -109,7 +114,32 @@ All colors MUST be HSL.
     @apply border-border;
   }
 
+  /* Tailwind 3 defaults that Tailwind 4 dropped */
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+/* Tailwind 3 spacing: Tailwind 4 puts space-x/y margins on every child but the last,
+   which inline labels ignore; Tailwind 3 put them on every child but the first. */
+@utility space-y-* {
+  & > :not(:last-child) {
+    margin-block-end: 0;
+  }
+  & > :not(:first-child) {
+    margin-block-start: calc(var(--spacing) * --value(integer));
+  }
+}
+@utility space-x-* {
+  & > :not(:last-child) {
+    margin-inline-end: 0;
+  }
+  & > :not(:first-child) {
+    margin-inline-start: calc(var(--spacing) * --value(integer));
   }
 }

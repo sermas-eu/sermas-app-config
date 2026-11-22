@@ -69,7 +69,7 @@ export const ConfigWizard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-accent/5 py-8 px-4">
+    <div className="min-h-screen bg-linear-to-br/srgb from-primary/5 via-background to-accent/5 py-8 px-4">
       <div className="max-w-5xl mx-auto">
         <div className="flex justify-end">
           <Button variant="ghost" size="sm" onClick={logout}>
@@ -80,7 +80,7 @@ export const ConfigWizard = () => {
 
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent mb-2">
+          <h1 className="text-4xl font-bold bg-linear-to-r/srgb from-primary to-accent bg-clip-text text-transparent mb-2">
             SERMAS Configuration Wizard
           </h1>
           <p className="text-muted-foreground">
