@@ -1,9 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import yaml from "js-yaml";
+import { dump } from "js-yaml";
 import { Download, Send } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { useAuth } from "@/lib/auth";
 import { WizardData } from "./types";
 
 const API_URL = "/api/wizard"
@@ -15,9 +16,17 @@ interface ExportStepProps {
 
 export const ExportStep = ({ data }: ExportStepProps) => {
   const [isCreating, setIsCreating] = useState(false);
+  const { token, logout } = useAuth();
 
   const createConfig = () => {
-    const config: any = {
+    const settings: Record<string, unknown> = { login: data.login };
+    if (data.settings.avatar) settings.avatar = data.settings.avatar;
+    settings.language = data.settings.language;
+    settings.chatModel = data.settings.chatModel;
+    if (data.settings.prompt.text) settings.prompt = { text: data.settings.prompt.text };
+    settings.theme = data.settings.theme;
+
+    const config: Record<string, unknown> = {
       name: data.name,
       public: data.public,
       description: data.description,
@@ -38,24 +47,7 @@ export const ExportStep = ({ data }: ExportStepProps) => {
       config.modules = data.modules;
     }
 
-    config.settings = {
-      login: data.login,
-    };
-
-    if (data.settings.avatar) {
-      config.settings.avatar = data.settings.avatar;
-    }
-
-    config.settings.language = data.settings.language;
-    config.settings.chatModel = data.settings.chatModel;
-
-    if (data.settings.prompt.text) {
-      config.settings.prompt = {
-        text: data.settings.prompt.text,
-      };
-    }
-
-    config.settings.theme = data.settings.theme;
+    config.settings = settings;
 
     if (data.knowledge.documents.length > 0) {
       config.knowledge = {
@@ -67,11 +59,11 @@ export const ExportStep = ({ data }: ExportStepProps) => {
       };
     }
 
-    return config
+    return config;
   };
 
-  const generateYAML = (config: any) => {
-    return yaml.dump(config, { indent: 2, lineWidth: -1 });
+  const generateYAML = (config: Record<string, unknown>) => {
+    return dump(config, { indent: 2, lineWidth: -1 });
   };
 
   const downloadYAML = () => {
@@ -91,6 +83,13 @@ export const ExportStep = ({ data }: ExportStepProps) => {
   };
 
   const createApp = async () => {
+    const accessToken = token();
+    if (!accessToken) {
+      // back to the login form; the wizard keeps its data
+      toast.info("Your session has expired, please sign in again");
+      logout();
+      return;
+    }
     setIsCreating(true);
     try {
       const formData = new FormData();
@@ -121,8 +120,17 @@ export const ExportStep = ({ data }: ExportStepProps) => {
       const response = await fetch(API_URL, {
         method: "POST",
         body: formData,
+        headers: { Authorization: `Bearer ${accessToken}` },
       });
 
+      if (response.status === 401) {
+        toast.info("Your session has expired, please sign in again");
+        logout();
+        return;
+      }
+      if (response.status === 403) {
+        throw new Error("Your account is not allowed to create this application");
+      }
       if (!response.ok) {
         throw new Error(`Server responded with ${response.status}`);
       }
@@ -148,7 +156,7 @@ export const ExportStep = ({ data }: ExportStepProps) => {
 
   return (
     <div className="space-y-6">
-      <Card className="p-6 bg-gradient-to-br from-primary/5 to-accent/5">
+      <Card className="p-6 bg-linear-to-br/srgb from-primary/5 to-accent/5">
         <h3 className="font-semibold mb-4">Create Application</h3>
         <p className="text-sm text-muted-foreground mb-4">
           Submit your configuration to create the SERMAS application

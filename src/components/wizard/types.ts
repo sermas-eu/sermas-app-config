@@ -2,7 +2,7 @@ export interface Module {
   moduleId: string;
   secret?: string;
   supports: string[];
-  config: Record<string, any>;
+  config: Record<string, unknown>;
 }
 
 export interface Avatar {

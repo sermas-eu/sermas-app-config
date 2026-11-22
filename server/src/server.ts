@@ -1,4 +1,5 @@
 import { healthCheckRouter } from '@/api/healthCheck/healthCheckRouter';
+import { authRouter } from '@/api/auth/router';
 import { appRouter } from '@/api/wizard/router';
 import errorHandler from '@/common/middleware/errorHandler';
 import rateLimiter from '@/common/middleware/rateLimiter';
@@ -28,6 +29,7 @@ if (env.NODE_ENV === 'production') {
 
 // Routes
 app.use('/health-check', healthCheckRouter);
+app.use('/api', authRouter);
 app.use('/api', appRouter);
 
 // Error handlers
