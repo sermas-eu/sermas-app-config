@@ -22,12 +22,8 @@ const envSchema = z.object({
 
   COMMON_RATE_LIMIT_WINDOW_MS: z.coerce.number().int().positive().default(1000),
 
+  // the SERMAS API; the wizard calls it as the logged-in user, with no account of its own
   SERMAS_URL: z.coerce.string().url(),
-  SERMAS_CLIENT_ID: z.coerce.string().optional(),
-  SERMAS_CLIENT_SECRET: z.coerce.string().optional(),
-  SERMAS_USER: z.coerce.string().optional(),
-  SERMAS_PASSWORD: z.coerce.string().optional(),
-  SERMAS_APPID: z.coerce.string().optional(),
 });
 
 const parsedEnv = envSchema.safeParse(process.env);

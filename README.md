@@ -1,4 +1,26 @@
-# Welcome to your Lovable project
+# SERMAS app configuration wizard
+
+A wizard that creates a SERMAS application, and an example of using the SERMAS API.
+It has two parts: the UI (this directory, React/Vite) and a small server
+(`server/`, Express) that turns the wizard's configuration into an app and creates
+it through `@sermas/api-client`.
+
+**A SERMAS user account is required.** The wizard asks for the user's SERMAS
+username and password, passes the login to the SERMAS API (`POST /api/login` on the
+wizard server), and creates the app with that user's token: the user becomes the
+app's owner. The wizard server has no account of its own and stores no credentials
+or tokens; the browser keeps the access token for the tab only.
+
+Run it against a SERMAS API:
+
+```sh
+# server, on :8083; SERMAS_URL is the only SERMAS setting (see server/.env.example)
+cd server && npm ci && SERMAS_URL=http://localhost:8080 PORT=8083 npm run dev
+# UI, on :8082; /api is proxied to the server
+npm ci && npm run dev
+```
+
+## Lovable project
 
 ## Project info
 

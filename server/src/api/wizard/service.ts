@@ -1,13 +1,12 @@
 import { getLogger } from '@/common/logger';
 import { ServiceResponse } from '@/common/models/serviceResponse';
 import { env } from '@/common/utils/envConfig';
-import { logger } from '@/server';
-import {
+import { failureStatus, sermasClient } from '@/common/utils/sermas';
+import type {
   CreatePlatformAppDto,
   RepositoryAvatarDto,
   RepositoryBackgroundDto,
   RepositoryDocumentDto,
-  SermasApiClient,
 } from '@sermas/api-client';
 import { StatusCodes } from 'http-status-codes';
 import { SermasAppSchema } from './model';
@@ -27,21 +26,13 @@ type Upload = {
 
 export class AppService {
   private readonly logger = getLogger(AppService.name);
-  private sermas: SermasApiClient;
-  constructor() {
-    this.sermas = new SermasApiClient({
-      baseURL: env.SERMAS_URL,
-      // clientId: env.SERMAS_CLIENT_ID,
-      // clientSecret: env.SERMAS_CLIENT_SECRET,
-      // appId: env.SERMAS_APPID,
-    });
-  }
 
-  // Retrieves all users from the database
-  async create(files: UploadedItem[]): Promise<ServiceResponse<any | null>> {
+  /** Creates the app as the user who owns `accessToken`. */
+  async create(
+    accessToken: string,
+    files: UploadedItem[],
+  ): Promise<ServiceResponse<any | null>> {
     try {
-      // await this.init();
-
       const upload: Upload = {
         config: null,
       };
@@ -55,32 +46,28 @@ export class AppService {
 
       if (!upload.config) throw new Error('Missing config field');
 
-      const result = await this.createApp(upload.config);
+      const result = await this.createApp(accessToken, upload.config);
 
       return ServiceResponse.success<any>('Created', result);
       // return ServiceResponse.success<SermasApp>('Created', assistant);
     } catch (ex) {
-      const errorMessage = `Error creating the assistant: ${(ex as Error).message}`;
-      logger.error(errorMessage);
+      this.logger.error(
+        `Error creating the assistant: ${(ex as Error).message}`,
+      );
+      const status = failureStatus(ex);
       return ServiceResponse.failure(
-        'Error creating the assistant',
+        status === StatusCodes.INTERNAL_SERVER_ERROR
+          ? 'Error creating the assistant'
+          : 'Not authorized',
         null,
-        StatusCodes.INTERNAL_SERVER_ERROR,
+        status,
       );
     }
   }
 
-  async createApp(data: any) {
-    this.logger.debug(`Received ${JSON.stringify(data, null, 2)}`);
+  async createApp(accessToken: string, data: any) {
     const assistant = SermasAppSchema.parse(data);
-
-    // await this.sermas.loadToken(env.SERMAS_CLIENT_ID, env.SERMAS_CLIENT_SECRET);
-    const res = await this.sermas.login(env.SERMAS_USER, env.SERMAS_PASSWORD);
-
-    const client = new SermasApiClient({
-      baseURL: env.SERMAS_URL,
-      access_token: res.access_token,
-    });
+    const client = sermasClient(accessToken);
 
     const user = await client.api.authentication.whoami();
 

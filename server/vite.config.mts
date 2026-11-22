@@ -7,6 +7,7 @@ export default defineConfig({
 			exclude: ["**/node_modules/**", "**/index.ts, ", "vite.config.mts"],
 		},
 		globals: true,
+		env: { NODE_ENV: "test", SERMAS_URL: "http://sermas.test" },
 		restoreMocks: true,
 	},
 	plugins: [tsconfigPaths()],

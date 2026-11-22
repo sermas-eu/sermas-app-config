@@ -9,7 +9,8 @@ export default defineConfig(({ mode }) => ({
     host: "::",
     port: 8082,
         proxy: {
-          '/api/wizard': 'http://localhost:8083',
+          // the wizard server (server/): login and app creation
+          '/api': 'http://localhost:8083',
         }
   },
   plugins: [react(), mode === "development" && componentTagger()].filter(Boolean),

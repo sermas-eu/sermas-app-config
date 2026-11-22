@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Check, ChevronLeft, ChevronRight } from "lucide-react";
+import { Check, ChevronLeft, ChevronRight, LogOut } from "lucide-react";
+import { useAuth } from "@/lib/auth";
 import { BasicInfoStep } from "./wizard/BasicInfoStep";
 import { AvatarsStep } from "./wizard/AvatarsStep";
 import { ModulesStep } from "./wizard/ModulesStep";
@@ -22,6 +23,7 @@ const STEPS = [
 ];
 
 export const ConfigWizard = () => {
+  const { logout } = useAuth();
   const [currentStep, setCurrentStep] = useState(1);
   const [data, setData] = useState<WizardData>({
     name: "",
@@ -69,6 +71,13 @@ export const ConfigWizard = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-accent/5 py-8 px-4">
       <div className="max-w-5xl mx-auto">
+        <div className="flex justify-end">
+          <Button variant="ghost" size="sm" onClick={logout}>
+            <LogOut className="w-4 h-4 mr-2" />
+            Sign out
+          </Button>
+        </div>
+
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent mb-2">
