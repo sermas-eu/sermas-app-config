@@ -11,7 +11,11 @@ class AppController {
     const token = bearerToken(req);
     const serviceResponse = token
       ? await appService.create(token, (req as any).files)
-      : ServiceResponse.failure('Login required', null, StatusCodes.UNAUTHORIZED);
+      : ServiceResponse.failure(
+          'Login required',
+          null,
+          StatusCodes.UNAUTHORIZED,
+        );
     res.status(serviceResponse.statusCode).send(serviceResponse);
   };
 }

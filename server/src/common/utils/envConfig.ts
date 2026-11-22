@@ -1,16 +1,19 @@
-import dotenv from 'dotenv';
 import { z } from 'zod';
 
-dotenv.config({
-  quiet: true,
-});
+// a local .env, when there is one (Node's own loader; existing variables win)
+try {
+  process.loadEnvFile();
+} catch {
+  // no .env: the environment alone
+}
 
 const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'production', 'test']).default('production'),
 
   HOST: z.string().min(1).default('localhost'),
 
-  PORT: z.coerce.number().int().positive().default(8080),
+  // 8083: the port the UI's dev proxy expects
+  PORT: z.coerce.number().int().positive().default(8083),
 
   CORS_ORIGIN: z.string().default('http://localhost:8080'),
 
@@ -23,13 +26,16 @@ const envSchema = z.object({
   COMMON_RATE_LIMIT_WINDOW_MS: z.coerce.number().int().positive().default(1000),
 
   // the SERMAS API; the wizard calls it as the logged-in user, with no account of its own
-  SERMAS_URL: z.coerce.string().url(),
+  SERMAS_URL: z.url(),
 });
 
 const parsedEnv = envSchema.safeParse(process.env);
 
 if (!parsedEnv.success) {
-  console.error('❌ Invalid environment variables:', parsedEnv.error.format());
+  console.error(
+    '❌ Invalid environment variables:',
+    z.prettifyError(parsedEnv.error),
+  );
   throw new Error('Invalid environment variables');
 }
 

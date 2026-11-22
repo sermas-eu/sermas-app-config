@@ -17,11 +17,18 @@ export const LoginSchema = z.object({
  * SERMAS API. The tokens go back to the browser; the wizard keeps nothing.
  */
 export const login = async (req: Request, res: Response) => {
-  const { username, password } = req.body as { username: string; password: string };
+  const { username, password } = req.body as {
+    username: string;
+    password: string;
+  };
   try {
     const token = await sermasClient().api.authentication.login({
       // appId is optional for the API (platform login); the generated type requires it
-      requestBody: { username, password, appId: undefined as unknown as string },
+      requestBody: {
+        username,
+        password,
+        appId: undefined as unknown as string,
+      },
     });
     const response = ServiceResponse.success('Logged in', {
       access_token: token.access_token,
@@ -32,8 +39,16 @@ export const login = async (req: Request, res: Response) => {
     const status = apiErrorStatus(e);
     const response =
       status === StatusCodes.UNAUTHORIZED || status === StatusCodes.FORBIDDEN
-        ? ServiceResponse.failure('Invalid credentials', null, StatusCodes.UNAUTHORIZED)
-        : ServiceResponse.failure('Login failed', null, StatusCodes.BAD_GATEWAY);
+        ? ServiceResponse.failure(
+            'Invalid credentials',
+            null,
+            StatusCodes.UNAUTHORIZED,
+          )
+        : ServiceResponse.failure(
+            'Login failed',
+            null,
+            StatusCodes.BAD_GATEWAY,
+          );
     res.status(response.statusCode).send(response);
   }
 };

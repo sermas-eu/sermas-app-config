@@ -11,11 +11,13 @@ wizard server), and creates the app with that user's token: the user becomes the
 app's owner. The wizard server has no account of its own and stores no credentials
 or tokens; the browser keeps the access token for the tab only.
 
-Run it against a SERMAS API:
+Run it against a SERMAS API, with Node 24. The server compiles `@sermas/api-client`
+from its sources, so it needs a `sermas-api-client` checkout beside this one
+(`API_CLIENT_DIR` points the tests elsewhere).
 
 ```sh
 # server, on :8083; SERMAS_URL is the only SERMAS setting (see server/.env.example)
-cd server && npm ci && SERMAS_URL=http://localhost:8080 PORT=8083 npm run dev
+cd server && npm ci && SERMAS_URL=http://localhost:8080 npm run dev
 # UI, on :8082; /api is proxied to the server
 npm ci && npm run dev
 ```

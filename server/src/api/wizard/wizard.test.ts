@@ -1,6 +1,14 @@
 import type { AddressInfo } from 'node:net';
 import type { Server } from 'node:http';
-import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+import {
+  afterAll,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
+} from 'vitest';
 
 // the SERMAS API client, as seen by the wizard: one per request
 const api = {
@@ -15,7 +23,8 @@ vi.mock('@/common/utils/sermas', async (importOriginal) => ({
   sermasClient: (token?: string) => sermasClient(token),
 }));
 
-const apiError = (status: number) => Object.assign(new Error(`HTTP ${status}`), { status });
+const apiError = (status: number) =>
+  Object.assign(new Error(`HTTP ${status}`), { status });
 
 let server: Server;
 let base: string;
@@ -36,7 +45,11 @@ beforeEach(() => {
 
 const wizard = (config: unknown, token?: string) => {
   const body = new FormData();
-  body.append('config', new Blob([JSON.stringify(config)], { type: 'text/json' }), 'config.json');
+  body.append(
+    'config',
+    new Blob([JSON.stringify(config)], { type: 'text/json' }),
+    'config.json',
+  );
   return fetch(`${base}/api/wizard`, {
     method: 'POST',
     body,
@@ -58,7 +71,7 @@ describe('POST /api/wizard', () => {
     const { requestBody } = api.platform.createApp.mock.calls[0][0];
     expect(requestBody.ownerId).toBe('user-1');
     expect(requestBody.name).toBe('demo');
-    const json = await res.json();
+    const json = (await res.json()) as { responseObject: unknown };
     expect(json.responseObject).toEqual({
       appId: 'new-app',
       redirect: 'http://sermas.test/new-app',
@@ -72,7 +85,10 @@ describe('POST /api/wizard', () => {
   });
 
   it('picks the groq model for groq settings', async () => {
-    await wizard({ name: 'demo', settings: { chatModel: 'groq' } }, 'user-token');
+    await wizard(
+      { name: 'demo', settings: { chatModel: 'groq' } },
+      'user-token',
+    );
     const { requestBody } = api.platform.createApp.mock.calls[0][0];
     expect(requestBody.settings.llm.chat).toBe('groq/openai/gpt-oss-120b');
   });
@@ -95,12 +111,17 @@ describe('POST /api/login', () => {
     const res = await login({ username: 'u', password: 'p' });
     expect(res.status).toBe(200);
     expect(sermasClient).toHaveBeenCalledWith(undefined);
-    expect(api.authentication.login.mock.calls[0][0].requestBody).toMatchObject({
-      username: 'u',
-      password: 'p',
+    expect(api.authentication.login.mock.calls[0][0].requestBody).toMatchObject(
+      {
+        username: 'u',
+        password: 'p',
+      },
+    );
+    const json = (await res.json()) as { responseObject: unknown };
+    expect(json.responseObject).toEqual({
+      access_token: 'at',
+      expires_in: 300,
     });
-    const json = await res.json();
-    expect(json.responseObject).toEqual({ access_token: 'at', expires_in: 300 });
   });
 
   it('answers 401 on wrong credentials', async () => {

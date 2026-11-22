@@ -17,7 +17,7 @@ const TTSSchema = z
 const AvatarSchema = z
   .object({
     id: z.string().optional(),
-    url: z.string().url().optional(),
+    url: z.url().optional(),
     gender: z.string().optional(),
     name: z.string().optional(),
     prompt: z.string().optional(),
@@ -33,7 +33,7 @@ const ModuleSchema = z
     secret: z.string().optional(),
     supports: z.array(SupportsEnum).optional(),
     // Unknown/variable shape; allow any key/value
-    config: z.record(z.any()).optional(),
+    config: z.record(z.string(), z.any()).optional(),
   })
   .optional();
 

@@ -158,8 +158,6 @@ export class AppService {
           tasks: 'groq/openai/gpt-oss-120b',
           // # translations specific model
           translation: 'groq/openai/gpt-oss-120b',
-          // # model for summarization tasks
-          summary: 'groq/openai/gpt-oss-120b',
         },
         prompt: {
           text: assistant.settings?.prompt?.text || '',
@@ -196,13 +194,14 @@ export class AppService {
     // this.logger.debug(newApp);
 
     try {
-      if (backgroundData) {
+      if (backgroundData && backgroundId) {
         this.logger.info(`Saving asset ${background}`);
         await client.api.ui.saveAsset({
           formData: {
             file: backgroundData,
             appId: newApp.appId,
             filename: 'background.jpg',
+            path: 'background.jpg',
             id: backgroundId,
             type: 'backgrounds',
           },
